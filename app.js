@@ -16,6 +16,12 @@ const app = express();
 
 app.use(cors);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.use(express.json());
 
 app.use(requestLogger);
