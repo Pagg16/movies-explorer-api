@@ -14,7 +14,7 @@ const { PORT = 3000, DB_URL = 'mongodb://localhost:27017/mestodb' } = process.en
 
 const app = express();
 
-// app.use(cors);
+app.use(cors);
 
 app.use(express.json());
 
