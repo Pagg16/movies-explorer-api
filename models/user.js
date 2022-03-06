@@ -1,0 +1,48 @@
+const mongoose = require('mongoose');
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
+
+const userSchems = new mongoose.Schema({
+  name: {
+    type: String,
+    default: 'Фикалий Иванович',
+    minlength: 2,
+    maxlength: 30,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: (v) => validator.isEmail(v),
+      message: 'Не явзяется валидным',
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
+  },
+}, { versionKey: false });
+
+userSchems.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .select('+password')
+    .orFail(new Error('Неправильные почта или пароль'))
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+
+          return user;
+        });
+    });
+};
+
+module.exports = mongoose.model('user', userSchems);
