@@ -54,10 +54,10 @@ module.exports.allMovies = (req, res, next) => {
 };
 
 module.exports.delMovie = (req, res, next) => {
-  const { movieId } = req.params;
+  const { id } = req.params;
 
   movieSchems
-    .findById(movieId)
+    .findById(id)
     .orFail(() => new NotFound('Фильм с указанным id не найден'))
     .then((movieToDel) => {
       const owner = String(movieToDel.owner);
@@ -68,8 +68,7 @@ module.exports.delMovie = (req, res, next) => {
         throw new ForbiddenError('Фильм с указанным _id не принадлежит вам');
       }
 
-      movieToDel.remove();
-      res.status(200).send(movieToDel);
+      movieToDel.remove().then(() => res.status(200).send(movieToDel));
     })
     .catch((err) => {
       if (err.message === 'CastError') {

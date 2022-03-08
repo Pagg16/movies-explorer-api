@@ -12,6 +12,7 @@ moviesRouter.post('/', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
+    duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
     image: Joi.string()
@@ -38,7 +39,7 @@ moviesRouter.post('/', celebrate({
         }
         return value;
       }),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
@@ -47,10 +48,10 @@ moviesRouter.post('/', celebrate({
 moviesRouter.get('/', allMovies);
 
 moviesRouter.delete(
-  '/:_id',
+  '/:id',
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().length(24).hex().required(),
+      id: Joi.string().length(24).hex().required(),
     }),
   }),
   delMovie,

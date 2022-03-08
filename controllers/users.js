@@ -6,6 +6,8 @@ const ConflictError = require('../errors/conflict-error');
 const NotFound = require('../errors/not-found');
 const UnauthorizedError = require('../errors/unauthorized-error');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.createUser = (req, res, next) => {
   const {
     name,
@@ -36,10 +38,8 @@ module.exports.createUser = (req, res, next) => {
 };
 
 module.exports.oneUser = (req, res, next) => {
-  const { userid } = req.params;
-
   userSchems
-    .findById(userid)
+    .findById(req.user._id)
     .orFail(() => new NotFound('Пользователь по указанному _id не найден'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -76,7 +76,7 @@ module.exports.login = (req, res, next) => {
 
   return userSchems.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, `${NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'}`, { expiresIn: '7d' });
       res.send({ token });
     })
     .catch((err) => {
