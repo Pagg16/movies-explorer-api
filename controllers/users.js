@@ -14,18 +14,14 @@ module.exports.createUser = (req, res, next) => {
     email,
     password,
   } = req.body;
-  bcrypt
-    .hash(password, 10)
+
+  return bcrypt.hash(password, 10)
     .then((hash) => userSchems.create({
       name,
       email,
       password: hash,
-    })
-      .then((user) => {
-        const userNoPassword = JSON.parse(JSON.stringify(user));
-        delete userNoPassword.password;
-        res.status(200).send({ userNoPassword });
-      }))
+    }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(`${Object.values(err.errors).map((error) => error.message).join(', ')}`));

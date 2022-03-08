@@ -2,7 +2,7 @@ require('dotenv').config();
 const { errors } = require('celebrate');
 const express = require('express');
 const mongoose = require('mongoose');
-const router = require('./routes');
+const router = require('./routes/index');
 const singinSingup = require('./routes/singinSingup');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/error-handler');
@@ -13,17 +13,11 @@ const { PORT = 3000, DB_URL = 'mongodb://localhost:27017/mestodb' } = process.en
 
 const app = express();
 
-app.use(cors);
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
-
 app.use(express.json());
 
 app.use(requestLogger);
+
+app.use(cors);
 
 app.use(singinSingup);
 

@@ -23,7 +23,16 @@ const userSchems = new mongoose.Schema({
     required: true,
     select: false,
   },
-}, { versionKey: false });
+}, {
+  versionKey: '',
+});
+
+userSchems.methods.toJSON = function hidePassword() {
+  const obj = this.toObject();
+  delete obj.password;
+
+  return obj;
+};
 
 userSchems.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
