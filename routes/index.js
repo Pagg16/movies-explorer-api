@@ -5,8 +5,8 @@ const NotFound = require('../errors/not-found');
 
 const router = new Router();
 
-router.use('/users', userRouter);
-router.use('/movies', moviesRouter);
+router.use(userRouter);
+router.use(moviesRouter);
 router.use((req, res, next) => {
   next(new NotFound('данные отсутствуют по указанному роуту'));
 });

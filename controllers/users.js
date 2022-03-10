@@ -5,6 +5,7 @@ const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
 const NotFound = require('../errors/not-found');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const Conflict = require('../errors/conflict-error');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -48,12 +49,12 @@ module.exports.oneUser = (req, res, next) => {
 };
 
 module.exports.updateUser = (req, res, next) => {
-  const { name, about } = req.body;
+  const { name, email } = req.body;
 
   userSchems
     .findByIdAndUpdate(
       req.user._id,
-      { name, about },
+      { name, email },
       { new: true, runValidators: true },
     )
     .orFail(() => new NotFound('Пользователь по указанному _id не найден'))
@@ -61,6 +62,8 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+      } else if (err.code === 11000) {
+        next(new Conflict('Пользователь с таким email существует'));
       } else {
         next(err);
       }

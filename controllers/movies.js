@@ -48,8 +48,8 @@ module.exports.createMovie = (req, res, next) => {
 
 module.exports.allMovies = (req, res, next) => {
   movieSchems
-    .find({ owner: req.user._id })
-    .then((cards) => res.status(200).send(cards))
+    .find({})
+    .then((movies) => res.status(200).send(movies))
     .catch(next);
 };
 
@@ -68,7 +68,7 @@ module.exports.delMovie = (req, res, next) => {
         throw new ForbiddenError('Фильм с указанным _id не принадлежит вам');
       }
 
-      movieToDel.remove().then(() => res.status(200).send(movieToDel));
+      return movieToDel.remove().then(() => res.status(200).send(movieToDel));
     })
     .catch((err) => {
       if (err.message === 'CastError') {
