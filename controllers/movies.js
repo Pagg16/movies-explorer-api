@@ -49,7 +49,11 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.allMovies = (req, res, next) => {
   movieSchems
     .find({})
-    .then((movies) => res.status(200).send(movies))
+    .then((movies) => {
+      const uderId = String(req.user._id);
+      const moviesUser = movies.filter((elem) => elem.owner === uderId);
+      res.status(200).send(moviesUser);
+    })
     .catch(next);
 };
 

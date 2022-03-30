@@ -15,7 +15,7 @@ const userSchems = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => validator.isEmail(v),
-      message: 'Не явзяется валидным',
+      message: 'Не является валидным',
     },
   },
   password: {
